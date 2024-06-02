@@ -15,7 +15,7 @@ function continuouslyChangeColor() {
         elements.forEach(element => {
             element.style.backgroundColor = getRandomBlackTint();
         });
-    }, 2000); // Change color every 2 seconds
+    }, 1000); // Change color every 2 seconds
 }
 
 
