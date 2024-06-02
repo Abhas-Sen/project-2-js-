@@ -241,7 +241,31 @@
     bottom: 8px;
     margin: 6px;
     cursor: pointer;
+    z-index: 3;
+    
 }
+.color{
+    height: 6px;
+    background: rgb(11, 145, 60);
+    border-radius: 10px;
+    position: absolute;
+    bottom: 8px;
+    margin: 6px;
+    margin-left: 0px;
+    margin-right: -2px;
+    cursor: pointer;
+    width: calc(100vw- 120px);
+    position: relative;
+    transition: left 0.4s;
+
+}
+
+.songlist li:hover  {
+    transition: all 1s;
+    
+}
+
+
 
 
 .circle {
@@ -250,7 +274,7 @@
     background-color: white;
     border-radius: 50%;
     position: relative;
-    bottom: 6px;
+    bottom: 23px;
     left: 0%;
     transition: left 0.5s;
 }

@@ -2,6 +2,25 @@ let currentSong = new Audio();
 let songs;
 let currfolder;
 
+function getRandomBlackTint() {
+    const r = Math.floor(Math.random() * 200); // Random number between 0 and 199
+    const g = Math.floor(Math.random() * 200); // Random number between 0 and 199
+    const b = Math.floor(Math.random() * 200); // Random number between 0 and 199
+    return `rgba(${r}, ${g}, ${b}, 0.5)`; // Set opacity to 0.5
+}
+
+function continuouslyChangeColor() {
+    setInterval(() => {
+        const elements = document.querySelectorAll(".songlist li");
+        elements.forEach(element => {
+            element.style.backgroundColor = getRandomBlackTint();
+        });
+    }, 2000); // Change color every 2 seconds
+}
+
+
+
+
 function secondsToMinutesSeconds(seconds) {
     if (isNaN(seconds) || seconds < 0) {
         return "00:00";
@@ -82,7 +101,7 @@ async function displayalbums() {
     let tempContainer = document.createElement("div");
     tempContainer.innerHTML = htmlContent;
     let anchors = tempContainer.getElementsByTagName("a");
-    let cardcontainer = document.querySelector(".cardcontainer");
+    let cardcontainer = document.querySelector(".cardcontainer");  
     let array = Array.from(anchors);
 
     for (let i = 0; i < array.length; i++) {
@@ -129,7 +148,38 @@ async function displayalbums() {
 
         })
     })
+
+    Array.from(document.getElementsByClassName("card")).forEach(e => {
+        e.addEventListener("mouseover", event => {
+            e.style.backgroundColor = getRandomBlackTint();
+           
+        });
+    
+        e.addEventListener("mouseout", event => {
+            e.style.backgroundColor = ""; // Revert to default background color
+        });
+    });
+    
+    Array.from(document.querySelectorAll(".songlist li")).forEach(item => {
+        item.addEventListener("mouseover", event => {
+            event.currentTarget.style.backgroundColor = getRandomBlackTint();
+        });
+      
+        item.addEventListener("mouseout", event => {
+            event.currentTarget.style.backgroundColor = ""; // Revert to default background color
+        });
+    });
+    
+    
+    
+
+  
 }
+
+
+
+
+
 
 async function main() {
 
@@ -156,15 +206,20 @@ async function main() {
 
     })
     currentSong.addEventListener("timeupdate", () => {
-        document.querySelector(".songtime").innerHTML = secondsToMinutesSeconds(currentSong.currentTime) + "/" + secondsToMinutesSeconds(currentSong.duration);
-        document.querySelector(".circle").style.left = (currentSong.currentTime / currentSong.duration) * 100 + "%";
-    })
-
+    let currentTime = currentSong.currentTime;
+    let duration = currentSong.duration;
+    let percent = (currentTime / duration) * 100;
+    document.querySelector(".circle").style.left = `${percent}%`;
+    document.querySelector(".color").style.width = `${percent}%`;
+    document.querySelector(".songtime").innerHTML = `${secondsToMinutesSeconds(currentTime)}/${secondsToMinutesSeconds(duration)}`;
+});
     document.querySelector(".seekbar").addEventListener("click", (e) => {
-        let percent = (e.offsetX / document.querySelector(".seekbar").offsetWidth) * 100;
+        let seekbar = document.querySelector(".seekbar");
+        let percent = (e.offsetX / seekbar.offsetWidth) * 100;
         document.querySelector(".circle").style.left = percent + "%";
+        document.querySelector(".color").style.width = percent + "%";
         currentSong.currentTime = (currentSong.duration * percent) / 100;
-    })
+    });
 
     document.querySelector(".hamburger").addEventListener("click", () => {
         document.querySelector(".left").style.left = "0";
@@ -199,23 +254,27 @@ async function main() {
     })
 
     // console.log(document.querySelector(".range").getElementsByTagName("input")[0])
+    let val;
 
     document.querySelector(".range").getElementsByTagName("input")[0].addEventListener("change", (e) => {
         console.log("setting volume to ", e.target.value);
+        val= e.target.value;
         currentSong.volume = parseInt(e.target.value) / 100
         if(currentSong.volume>0){
             document.querySelector(".volume>img").src=document.querySelector(".volume>img").src.replace("mute.svg","volume.svg");
-        }
+        }// color change is needed when bar get increased 
 
     })
 
     //load the playlist when it is clicked
 
-
+ 
     // add event listener to the volume icon
     document.querySelector(".volume>img").addEventListener("click", (e) => {
+      
         // console.log(e.target)
         if(e.target.src.includes("volume.svg")){
+         
             e.target.src= e.target.src.replace("volume.svg","mute.svg");
             currentSong.volume=0;
             document.querySelector(".range").getElementsByTagName("input")[0].value=0;
@@ -223,12 +282,20 @@ async function main() {
         else{
             e.target.src=e.target.src.replace("mute.svg","volume.svg");
             currentSong.volume=1;
-            document.querySelector(".range").getElementsByTagName("input")[0].value=10;
+            document.querySelector(".range").getElementsByTagName("input")[0].value=val;
+            console.log(val)
         }
     })
 
 
 
 }
+
+
+
+
+
+
+
 
 main();
